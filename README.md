@@ -24,8 +24,9 @@ WhatsApp buttons (including the floating button) open a pre-filled message to Du
 - Plain `index.html` and `styles.css`
 - No build step, no JavaScript framework
 - A few lines of vanilla JS close the mobile menu after a link is clicked
-- One Google Font: [DM Sans](https://fonts.google.com/specimen/DM+Sans)
-- Inline SVG favicon and decorative graphics (no stock photos)
+- Art direction: limewashed wall and door plaque (“Cal e persiana”), documented in DESIGN_NOTES.md
+- Two self-hosted Google Fonts: [Ibarra Real Nova](https://fonts.google.com/specimen/Ibarra+Real+Nova) (headings) and [Source Sans 3](https://fonts.google.com/specimen/Source+Sans+3) (body)
+- Inline SVG favicon (no stock photos)
 
 ## Local preview
 
