@@ -1,61 +1,68 @@
-# Clínica Exemplo Salvador — demo landing page
+# Clínica Exemplo Salvador (demo)
 
-A one-page, static portfolio site for **DulunduZ Tec** ([dulunduztec.com.br](https://dulunduztec.com.br)). It shows how a health and wellness clinic in Salvador, Bahia could look on the web: clear services, WhatsApp as the main call to action, and a mobile-first layout.
+A one-page, static demo landing for a **fictional** neighborhood clinic in Salvador, Bahia. It is a DulunduZ Tec portfolio piece, not a real health service.
 
-The business is **fictional**. The page is marked “Site de demonstração — empresa fictícia” in the banner and footer. There are no fake logos, testimonials, doctor names, or professional registrations.
+Visible copy is in Brazilian Portuguese. A banner and a footer badge state that the business is fictional.
 
-All visible copy is in Brazilian Portuguese (`pt-BR`).
+## Deploy layout
 
-## What’s on the page
+The site is **static files on the `main` branch root**. There is no bundler and no build step to publish.
 
-- Hero with a direct WhatsApp call to action
-- Services: Clínica geral, Pediatria, Exames, Fisioterapia
-- About (states clearly that the clinic is fictional)
-- How to book (three steps)
-- Location and hours, with a placeholder address labelled “Endereço de exemplo”
-- FAQ
-- Contact
-- Footer credit: “Criado por DulunduZ Tec”
+- GitHub Pages should be set to **Deploy from a branch → `main` / root** (or `/docs` is not used).
+- The public URL is `https://ravidulundu.github.io/clinica-exemplo-demo/`.
+- Asset paths are **relative** (`assets/...`, `styles.css`), so the project-site base path works without a rewrite.
+- `.nojekyll` is present so GitHub Pages does not process the files with Jekyll.
 
-WhatsApp buttons (including the floating button) open a pre-filled message to DulunduZ Tec’s number: +55 71 98158-7532.
+This repo is not published in the current pass (no push, no Pages deploy). When it is published, enable Pages on `main` as above and check the live URL.
 
-## Stack
+## UI SDK
 
-- Plain `index.html` and `styles.css`
-- No build step, no JavaScript framework
-- A few lines of vanilla JS close the mobile menu after a link is clicked
-- Art direction: limewashed wall and door plaque (“Cal e persiana”), documented in DESIGN_NOTES.md
-- Two self-hosted Google Fonts: [Ibarra Real Nova](https://fonts.google.com/specimen/Ibarra+Real+Nova) (headings) and [Source Sans 3](https://fonts.google.com/specimen/Source+Sans+3) (body)
-- Inline SVG favicon (no stock photos)
+[@ui-sdk/web](https://github.com/vercel-labs/ui) and `@ui-sdk/core` are pinned to **0.1.0-beta.14** (Apache-2.0) and self-hosted in `assets/vendor/ui-sdk/`. The official `web.css` theme is **not** loaded; only behavior and accessibility of the custom elements are used, with project styles.
+
+Components used: **Tabs**, **Calendar**, **Segmented Control**, **Accordion**, **Carousel** (viewport under 64rem), **Drawer** (mobile menu).
+
+`assets/js/main.js` loads each component as an ES module when its section is near the viewport, so first paint does not wait on the full library. With JavaScript off, tab panels and FAQ answers stay visible, the menu uses a native `details` element, and booking falls back to a plain WhatsApp link.
+
+A Vite bundle was considered to tree-shake the SDK. The six components still compiled to ~310 KB minified (~91 KB gzip), so a no-build copy of the official `browser/` folder was kept instead, with per-component dynamic imports.
+
+## Fonts and photos
+
+- **Newsreader** (500–600) and **Figtree** (400–600), self-hosted as four WOFF2 files (latin + latin-ext), `font-display: swap`.
+- Photos are from [Pexels](https://www.pexels.com/license/), downloaded once, cropped, and served as AVIF + WebP + JPEG with `srcset` (`480/800/1200/1600` where useful). The hero uses art-direction (`4:3` mobile, `4:5` desktop) and `fetchpriority="high"`. Credits (photographer + Pexels link) are in the footer.
 
 ## Local preview
 
-Open `index.html` in a browser, or serve the folder:
-
 ```bash
-# Python
-python3 -m http.server 8080 --directory .
-
-# or Node
-npx serve .
+python3 -m http.server 8765
+# open http://127.0.0.1:8765/
 ```
 
-Then visit `http://localhost:8080`.
+Validate markup:
 
-## Deploy on GitHub Pages
+```bash
+npx html-validate --config .htmlvalidate.json index.html
+```
 
-1. Create a GitHub repository (for example `clinica-exemplo-demo`).
-2. Upload `index.html`, `styles.css`, and this `README.md` to the default branch (usually `main`). Screenshots are optional.
-3. In the repo, open **Settings → Pages**.
-4. Under **Build and deployment**, set **Source** to **Deploy from a branch**.
-5. Choose the `main` branch and the `/ (root)` folder, then save.
-6. After a minute or two, the site will be available at `https://<user>.github.io/clinica-exemplo-demo/`.
+Lighthouse (against the same local server, production files):
 
-If the repo is named `<user>.github.io`, the site will be served from the root of that domain instead.
+```bash
+npx lighthouse http://127.0.0.1:8765/ --preset=desktop --output html --output-path reports/lighthouse-desktop.html
+npx lighthouse http://127.0.0.1:8765/ --form-factor=mobile --screenEmulation.mobile --output html --output-path reports/lighthouse-mobile.html
+```
 
-No GitHub Action or bundler is required. After you have a public URL, you can add `og:url` and `og:image` (for example a desktop screenshot) to the `<head>` of `index.html`.
+The page is `noindex` because this is a fictional demo; the SEO category may drop because of that.
 
-## Notes
+## Honesty
 
-- The address, opening hours, and map block are clearly labelled as examples and do not point to a real place.
-- This folder is a static snapshot only. Publishing it is a separate step and is not part of the local files.
+- Banner: “Site de demonstração · clínica fictícia criada pela DulunduZ Tec”.
+- Footer badge: “Site de demonstração — empresa fictícia”.
+- Doctor cards: “Perfil de exemplo”. Reviews: “Depoimento de exemplo”.
+- No CRM, CRO, CNPJ, or other official numbers; legal fields say “[preencher com dados reais]”.
+- Text wordmark only. Address is labeled “endereço de exemplo”.
+- Insurers are a text list of examples, without real logos.
+- “Criado por DulunduZ Tec” links to https://dulunduztec.com.br.
+- WhatsApp CTAs use https://wa.me/5571981587532. “Quero um site assim” is a DulunduZ lead message; appointment CTAs include “(mensagem de demonstração)”.
+
+## License notes
+
+Site code is for the DulunduZ Tec portfolio. Pexels photos remain under the Pexels License. UI SDK remains under Apache-2.0 (see `assets/vendor/ui-sdk/`).
